@@ -194,12 +194,3 @@ README.md
 
 ---
 
-## 9. Summary
-
-This project demonstrates:
-
-* A complete offline AI pipeline
-* Thoughtful model selection and trade-offs
-* Clean, modular system design
-* Robust handling of real-world constraints
-* Clear documentation and usability

@@ -108,5 +108,3 @@ This project demonstrates:
 * End-to-end AI system design
 * Robust handling of long-form content
 * Clean separation between backend logic and UI
-
-This 1-page version is **perfect for take-home submissions** ✅

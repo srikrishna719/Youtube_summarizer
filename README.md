@@ -203,10 +203,3 @@ This project demonstrates:
 * Clean, modular system design
 * Robust handling of real-world constraints
 * Clear documentation and usability
-
-If you want, next I can:
-
-* Review this README **as an evaluator**
-* Help you record the **demo video script**
-* Prepare a **submission email/message**
-* Create a **2-minute verbal explanation** for interviews

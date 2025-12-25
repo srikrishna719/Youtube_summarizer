@@ -1,110 +1,212 @@
-# YouTube Video Summarizer (Offline)
+# Offline YouTube Video Summarizer
 
-This project is an **end-to-end offline AI system** that takes a YouTube video link, converts the audio to text, and generates a concise summary — without using any cloud-based APIs.
+## 1. Project Overview
 
-The entire pipeline runs **locally** on CPU.
+This project is an **end-to-end offline AI system** that accepts a YouTube video URL, downloads the audio, transcribes the speech into text, and generates a concise summary.
 
----
+All AI models (speech-to-text and summarization) run **entirely offline** on the local machine without relying on any cloud-based APIs.
 
-## What the System Does
+The application includes both:
 
-1. Accepts a **YouTube URL**
-2. Downloads the **audio** from the video
-3. Converts speech to text using an **offline Whisper model**
-4. Splits long transcripts into smaller chunks
-5. Generates a summary using an **offline language model**
-6. Displays progress and results via a **Streamlit web interface**
+* a **command-line interface (CLI)**, and
+* a **Streamlit-based web interface** for easier interaction and demonstration.
 
 ---
 
-## Architecture
+## 2. Setup and Installation Instructions
 
-```
-YouTube URL
-   ↓
-Audio Download (yt-dlp)
-   ↓
-Speech-to-Text (Whisper – offline)
-   ↓
-Chunking
-   ↓
-Hierarchical Summarization (LLM – offline)
-   ↓
-Final Summary
-```
+### System Requirements
 
----
+* Python 3.10+
+* ffmpeg (required for audio processing)
 
-## Models Used (Offline)
-
-* **Speech-to-Text:** Whisper (via faster-whisper)
-* **Summarization:** facebook/bart-large-cnn
-
-Models are downloaded once and stored locally.
-After the first run, the system works completely offline.
-
----
-
-## Tech Stack
-
-* Python
-* yt-dlp
-* Whisper (faster-whisper)
-* Hugging Face Transformers
-* Streamlit
-* ffmpeg
-
----
-
-## How to Run
-
-### System Requirement
+Install ffmpeg:
 
 ```bash
+sudo apt update
 sudo apt install ffmpeg -y
 ```
 
-### Setup
+---
+
+### Python Environment Setup
+
+Create and activate a virtual environment:
 
 ```bash
 python -m venv venv
 source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-### Run (Recommended)
+---
+
+### Model Download (Offline Setup)
+
+* Whisper (speech-to-text) and BART (summarization) models are **automatically downloaded on first run**
+* Models are stored locally inside the `models/` directory
+* After the initial download, the system runs fully offline
+
+---
+
+## 3. Design Choices and Justification
+
+### Speech-to-Text Model
+
+* **Model:** Whisper (via faster-whisper)
+* **Reason for Choice:**
+
+  * High transcription accuracy
+  * Open-source and offline-capable
+  * Optimized CPU inference using faster-whisper
+* **Trade-off:**
+
+  * Slightly slower on CPU compared to GPU, but acceptable for offline processing
+
+---
+
+### Summarization Model
+
+* **Model:** facebook/bart-large-cnn
+* **Reason for Choice:**
+
+  * Strong abstractive summarization performance
+  * Well-suited for long-form text
+  * Stable and widely used in production systems
+* **Trade-off:**
+
+  * Larger model size increases inference time on CPU
+
+---
+
+### Architecture Decisions
+
+* Modular pipeline design:
+
+  * Downloader
+  * Transcriber
+  * Chunker
+  * Summarizer
+* **Hierarchical summarization** is used to safely handle long transcripts by:
+
+  * Summarizing individual chunks
+  * Generating a final summary from chunk summaries
+* Backend logic is decoupled from the UI, allowing easy extension to other interfaces (CLI, web, API)
+
+---
+
+## 4. Usage
+
+### Streamlit Web Interface (Recommended)
+
+Run the application:
 
 ```bash
 streamlit run app_streamlit.py
 ```
 
-Enter a YouTube URL in the browser to generate the summary.
+Steps:
+
+1. Open the Streamlit URL in the browser
+2. Enter a YouTube video link
+3. View real-time progress logs
+4. Receive the generated summary
 
 ---
 
-## Key Features
+### Command-Line Interface (Optional)
 
-* Fully offline AI pipeline
-* Handles long videos using chunking + hierarchical summarization
-* Live progress tracking and logs in UI
-* Modular and clean architecture
-* CPU-friendly (no GPU required)
+```bash
+python main.py
+```
 
----
-
-## Limitations
-
-* CPU inference can be slow for long videos
-* YouTube extraction may show warnings due to platform changes
-* First run takes time to download models
+Enter a YouTube URL when prompted.
 
 ---
 
-## Summary
+## 5. Challenges Faced and Solutions
+
+### Handling Long Videos
+
+* **Problem:** Language models have context length limits
+* **Solution:** Implemented chunking and hierarchical summarization
+
+---
+
+### Offline Constraints
+
+* **Problem:** Models must run without cloud APIs
+* **Solution:** Used open-source models and local caching of model weights
+
+---
+
+### YouTube Extraction Variability
+
+* **Problem:** YouTube streaming formats change frequently
+* **Solution:** Used yt-dlp, which robustly selects the best available audio format and logs warnings without breaking the pipeline
+
+---
+
+### User Feedback During Long Processing
+
+* **Problem:** Long-running tasks appear unresponsive
+* **Solution:** Added progress tracking, logs, and percentage updates in the Streamlit UI
+
+---
+
+## 6. Demonstration
+
+A short screencast video is included demonstrating:
+
+* Entering a YouTube URL
+* Audio download
+* Transcription
+* Summarization
+* Final output display
+
+---
+
+## 7. Robustness
+
+* Invalid URLs are caught and reported
+* Progress and error logs are displayed clearly
+* Long videos are handled safely using chunking
+* Failures in any stage are logged and surfaced to the user
+
+---
+
+## 8. Project Structure
+
+```
+app/                # Core pipeline logic
+main.py             # CLI entry point
+app_streamlit.py    # Streamlit UI
+models/             # Local model storage (ignored in git)
+data/               # Runtime data (ignored in git)
+requirements.txt
+README.md
+```
+
+---
+
+## 9. Summary
 
 This project demonstrates:
 
-* Practical use of offline speech and language models
-* End-to-end AI system design
-* Robust handling of long-form content
-* Clean separation between backend logic and UI
+* A complete offline AI pipeline
+* Thoughtful model selection and trade-offs
+* Clean, modular system design
+* Robust handling of real-world constraints
+* Clear documentation and usability
+
+If you want, next I can:
+
+* Review this README **as an evaluator**
+* Help you record the **demo video script**
+* Prepare a **submission email/message**
+* Create a **2-minute verbal explanation** for interviews
